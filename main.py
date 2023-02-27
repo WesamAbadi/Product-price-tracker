@@ -5,7 +5,10 @@ from bs4 import BeautifulSoup
 import smtplib
 import time
 
+
 # set the headers and user string
+
+
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
 }
@@ -46,6 +49,9 @@ oldprice = converted_price
 # loop that allows the program to regularly check for prices
 pricedroped = False
 while (not pricedroped):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+    }
 
     response = requests.get(
         'http://127.0.0.1:5500/dist/index.html', headers=headers)
