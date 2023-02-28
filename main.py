@@ -1,78 +1,80 @@
-# import required files and modules
-
+import sqlite3
 import requests
 from bs4 import BeautifulSoup
-import smtplib
 import time
+import tkinter as tk
 
 
-# set the headers and user string
-
-
-headers = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-}
-response = requests.get(
-    'http://127.0.0.1:5500/dist/index.html', headers=headers)
-
-soup = BeautifulSoup(response.content, 'html.parser')
-soup.encode('utf-8')
-price = soup.find(class_="product-price").get_text().replace(',','').replace('$', '').replace(' ', '').strip()
-converted_price = float(price[0:5])
-oldprice = converted_price
-
-
-# function that sends an email if the prices fell down
-""" def send_mail():
-  server = smtplib.SMTP('smtp.gmail.com', 587)
-  server.ehlo()
-  server.starttls()
-  server.ehlo()
-
-  server.login('email@gmail.com', 'password')
-
-  subject = 'Price Fell Down'
-  body = "Check the prouduct link: http://127.0.0.1:5500/dist"
-
-  msg = f"Subject: {subject}\n\n{body}"
-  
-  server.sendmail(
-    'sender@gmail.com',
-    'receiver@gmail.com',
-    msg
-  )
-  #print a message to check if the email has been sent
-  print('Hey Email has been sent')
-  # quit the server
-  server.quit()
- """
-# loop that allows the program to regularly check for prices
-pricedroped = False
-while (not pricedroped):
+def track_price():
+    global website
+    website = website_entry.get()
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
     }
 
-    response = requests.get(
-        'http://127.0.0.1:5500/dist/index.html', headers=headers)
+    with sqlite3.connect('trckerS.db') as con:
+        cur = con.cursor()
+        cur.execute('''CREATE TABLE IF NOT EXISTS trackers
+                        (price real)''')
 
-# create the soup object
-    soup = BeautifulSoup(response.content, 'html.parser')
+        old_price = None
 
-# change the encoding to utf-8
-    soup.encode('utf-8')
-    title = soup.find(class_="product-title").get_text()
-    price = soup.find(class_="product-price").get_text().replace(',','').replace('$', '').replace(' ', '').strip()
-    # print(price)
+        # loop that allows the program to regularly check for prices
+        pricedropped = False
+        while not pricedropped:
+            try:
+                response = requests.get(
+                    website, headers=headers)
+                soup = BeautifulSoup(response.content, 'html.parser')
+                title = soup.find(class_="product-title").get_text()
+                price = soup.find(class_="product-price").get_text().replace(',',
+                                                                             '').replace('$', '').replace(' ', '').strip()
+                converted_price = float(price[0:5])
 
-    # converting the string amount to float
-    converted_price = float(price[0:5])
-    # print(converted_price)
-    if (converted_price < oldprice):
+                if old_price is None:
+                    old_price = converted_price
 
-        print("Price Droped!", converted_price)
-        oldprice = converted_price
-    elif (converted_price > oldprice):
-        oldprice = converted_price
-        print("Price Increased!", converted_price)
-    time.sleep(1)
+                if converted_price < old_price:
+                    print("Price Dropped!", converted_price)
+                    cur.execute("INSERT INTO trackers VALUES (?)",
+                                (converted_price,))
+                    for row in cur.execute('''SELECT * FROM trackers'''):
+                        print(row)
+                    old_price = converted_price
+                elif converted_price > old_price:
+                    cur.execute("INSERT INTO trackers VALUES (?)",
+                                (converted_price,))
+                    old_price = converted_price
+                    print("Price Increased!", converted_price)
+                    for row in cur.execute('''SELECT * FROM trackers'''):
+                        print(row)
+
+                # update the text widget with the contents of the database
+                price_list.delete("1.0", tk.END)
+                for row in cur.execute('''SELECT * FROM trackers'''):
+                    price_list.insert(tk.END, str(row) + "\n")
+
+                time.sleep(1)
+            except Exception as e:
+                print("An error occurred:", e)
+
+
+# create a tkinter window
+window = tk.Tk()
+window.title("Price Tracker")
+
+# create a label and an entry field for the website URL
+website_label = tk.Label(window, text="Website URL:")
+website_label.pack()
+website_entry = tk.Entry(window, width=50)
+website_entry.pack()
+
+# create a button to start tracking the price
+track_button = tk.Button(window, text="Track Price", command=track_price)
+track_button.pack()
+
+# create a text widget to display the contents of the database
+price_list = tk.Text(window)
+price_list.pack()
+
+window.mainloop()
