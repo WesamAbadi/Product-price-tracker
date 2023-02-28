@@ -1,8 +1,10 @@
 import sqlite3
+import sys
 import requests
 from bs4 import BeautifulSoup
 import time
 import tkinter as tk
+import threading
 
 
 def track_price():
@@ -20,8 +22,7 @@ def track_price():
         old_price = None
 
         # loop that allows the program to regularly check for prices
-        pricedropped = False
-        while not pricedropped:
+        while True:
             try:
                 response = requests.get(
                     website, headers=headers)
@@ -54,9 +55,28 @@ def track_price():
                 for row in cur.execute('''SELECT * FROM trackers'''):
                     price_list.insert(tk.END, str(row) + "\n")
 
-                time.sleep(1)
             except Exception as e:
                 print("An error occurred:", e)
+
+            # wait for 1 second before checking again
+            time.sleep(1)
+
+
+def start_tracking():
+    global thread
+    thread = threading.Thread(target=track_price)
+    thread.start()
+    track_button.config(state=tk.DISABLED)
+    website_entry.config(state=tk.DISABLED)
+
+
+def stop_tracking():
+    sys.exit("Error message")
+    global thread
+    thread.join()
+    track_button.config(state=tk.NORMAL)
+    website_entry.config(state=tk.NORMAL)
+
 
 
 # create a tkinter window
@@ -70,8 +90,12 @@ website_entry = tk.Entry(window, width=50)
 website_entry.pack()
 
 # create a button to start tracking the price
-track_button = tk.Button(window, text="Track Price", command=track_price)
+track_button = tk.Button(window, text="Start Tracking", command=start_tracking)
 track_button.pack()
+
+# create a button to stop tracking the price
+stop_button = tk.Button(window, text="Stop Tracking", command=stop_tracking)
+stop_button.pack()
 
 # create a text widget to display the contents of the database
 price_list = tk.Text(window)
