@@ -1,5 +1,3 @@
-https://github.com/cleure/Amazon-Scraper
-https://github.com/FaztWeb/python-tkinter-sqlite-crud
 # Product-price-tracker
 
 [ProductTracker](http://google.com) is python based implementation for product price tracker useing beautifulsoup and simple tkinter GUI.
@@ -7,9 +5,11 @@ https://github.com/FaztWeb/python-tkinter-sqlite-crud
 
 ## Main features
 
-- 🌐 Seleced products in a range of supported sites.
+- 🌐 Select products in a range of supported sites.
 - ⏳ Real-time price tracking.
 
+## Screenshots
+![image](https://i.postimg.cc/76HLwFB1/Annotation-2023-03-01-112133.png)
 
 ## Installation
 
@@ -23,7 +23,6 @@ https://github.com/FaztWeb/python-tkinter-sqlite-crud
 - 📉 Charts excel file exports.
 - 💾 Online storage system.
 
-
-## Documentation
-
-no need.
+## Used sources
+https://github.com/cleure/Amazon-Scraper  
+https://github.com/FaztWeb/python-tkinter-sqlite-crud  
