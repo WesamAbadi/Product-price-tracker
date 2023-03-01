@@ -31,10 +31,21 @@ def track_price():
                     website, headers=headers)
 
                 soup = BeautifulSoup(response.content, 'html.parser')
-                title = soup.find(class_="product-title").get_text()
-                price = soup.find(class_="product-price").get_text().replace(',',
-                                                                             '').replace('$', '').replace(' ', '').strip()
-                converted_price = float(price[0:5])
+
+                # Extract title and price based on the selected website
+                if website == "http://127.0.0.1:5500/dist/index.html":
+                    title = soup.find("h1").get_text()
+                    price = soup.find("p", class_="price").get_text().replace(
+                        ',', '').replace('$', '').strip()
+                elif website == "https://www.trendshome.es":
+                    title = soup.find("h1").get_text()
+                    price = soup.find("span", class_="amount").get_text().replace(
+                        ',', '').replace('€', '').strip()
+                else:
+                    # If the selected website is not recognized, raise an error
+                    raise ValueError("Selected website not recognized")
+
+                converted_price = float(price)
 
                 if old_price is None:
                     old_price = converted_price
@@ -65,6 +76,7 @@ def track_price():
 
             # wait for 1 second before checking again
             time.sleep(1)
+
 
 
 def start_tracking():
