@@ -15,9 +15,9 @@
 - 💾 Online storage system.
 
 ## Supported sites
-- [Amazon](amazon.com)
-- [Aliexpress](aliexpress.com)
-- [Arukerso](www.arukereso.hu)
+- [Amazon](https://www.amazon.com/)
+- [Aliexpress](https://www.aliexpress.com/)
+- [Arukerso](https://www.arukereso.hu/)
 
 ## Installation
 

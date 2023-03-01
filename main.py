@@ -5,6 +5,10 @@ import time
 import tkinter as tk
 import threading
 import customtkinter
+from email.message import EmailMessage
+import ssl
+import smtplib
+
 
 stop_flag = False  # flag to signal the thread to stop
 mycolor = '#242424'
@@ -77,13 +81,35 @@ def track_price():
             # wait for 1 second before checking again
             time.sleep(1)
 
+def send_email():
+    email_sender = '~'
 
+
+    email_password = '~'
+
+    email_receiver = '~'
+
+    subject = "Price just droped!!"
+    body = """
+    The price of the product you're tracking just droped to"""
+
+    em = EmailMessage()
+    em['From'] = email_sender
+    em['To'] = email_receiver
+    em['subject'] = subject
+    em.set_content(body)
+
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+        smtp.login(email_sender, email_password)
+        smtp.sendmail(email_sender, email_receiver, em.as_string())
 
 def start_tracking():
     global thread
     thread = threading.Thread(target=track_price)
     thread.start()
     track_button.configure(state=tk.DISABLED)
+    entry.configure(state=tk.DISABLED)
     combobox.configure(state=tk.DISABLED)
 
 
@@ -131,6 +157,9 @@ stop_button = customtkinter.CTkButton(
 stop_button.pack(padx=20, pady=10)
 
 
+entry = customtkinter.CTkEntry(master=window, placeholder_text="Your email address")
+entry.pack(padx=20, pady=10)
+
 # create a text widget to display the contents of the database
 
 
@@ -138,6 +167,8 @@ textbox = customtkinter.CTkTextbox(window)
 textbox.configure(width=500, height=300)
 
 textbox.pack()
+
+
 
 
 window.mainloop()
