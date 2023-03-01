@@ -7,9 +7,17 @@
 
 - 🌐 Select products in a range of supported sites.
 - ⏳ Real-time price tracking.
+- 📧 Email notification on price drop.
 
-## Screenshots
-![image](https://i.postimg.cc/76HLwFB1/Annotation-2023-03-01-112133.png)
+## Soon
+- 🎴 Dynamic theme (Material Design).
+- 📉 Charts excel file exports.
+- 💾 Online storage system.
+
+## Supported sites
+- [Amazon](amazon.com)
+- [Aliexpress](aliexpress.com)
+- [Arukerso](www.arukereso.hu)
 
 ## Installation
 
@@ -18,10 +26,8 @@
 1. Activate the Virtual Environment `source .venv/bin/activate` (Optional) 
 1. Install Requirements `pip3 install -r requirements.txt`
 
-## Soon
-- 🎴 Dynamic theme (Material Design).
-- 📉 Charts excel file exports.
-- 💾 Online storage system.
+## Screenshots
+![image](https://i.postimg.cc/76HLwFB1/Annotation-2023-03-01-112133.png)
 
 ## Used sources
 https://github.com/cleure/Amazon-Scraper  
