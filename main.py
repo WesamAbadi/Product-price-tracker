@@ -8,6 +8,10 @@ import customtkinter
 from email.message import EmailMessage
 import ssl
 import smtplib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 stop_flag = False  # flag to signal the thread to stop
@@ -82,10 +86,9 @@ def track_price():
             time.sleep(1)
 
 def send_email():
-    email_sender = '~'
+    email_sender = os.getenv("email_sender")
 
-
-    email_password = '~'
+    email_password = os.getenv("email_password")
 
     email_receiver = '~'
 

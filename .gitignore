@@ -1,3 +1,5 @@
 .vscode/
+__pycache__
 trckerS.db
+.env
 mailapp.py
