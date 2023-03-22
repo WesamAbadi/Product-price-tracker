@@ -42,8 +42,8 @@ def track_price():
 
                 # Extract title and price based on the selected website
                 if website == "http://127.0.0.1:5500/dist/index.html":
-                    title = soup.find("h1").get_text()
-                    price = soup.find("p", class_="price").get_text().replace(
+                    title = soup.find("h3").get_text()
+                    price = soup.find("h4", class_="product-price").get_text().replace(
                         ',', '').replace('$', '').strip()
                 elif website == "https://www.trendshome.es":
                     title = soup.find("h1").get_text()
@@ -65,6 +65,9 @@ def track_price():
                     for row in cur.execute('''SELECT * FROM trackers'''):
                         print(row)
                     old_price = converted_price
+                    user_email_text = user_email.get()
+                    if len(user_email_text.strip()) != 0:
+                        send_email(converted_price, user_email_text)
                 elif converted_price > old_price:
                     cur.execute("INSERT INTO trackers VALUES (?)",
                                 (converted_price,))
@@ -85,16 +88,16 @@ def track_price():
             # wait for 1 second before checking again
             time.sleep(1)
 
-def send_email():
+def send_email(price, email):
     email_sender = os.getenv("email_sender")
 
     email_password = os.getenv("email_password")
 
-    email_receiver = '~'
+    email_receiver = email
 
     subject = "Price just droped!!"
     body = """
-    The price of the product you're tracking just droped to"""
+    The price of the product you're tracking just droped to """ + str(price) +"$"
 
     em = EmailMessage()
     em['From'] = email_sender
@@ -112,7 +115,7 @@ def start_tracking():
     thread = threading.Thread(target=track_price)
     thread.start()
     track_button.configure(state=tk.DISABLED)
-    entry.configure(state=tk.DISABLED)
+    user_email.configure(state=tk.DISABLED)
     combobox.configure(state=tk.DISABLED)
 
 
@@ -160,8 +163,8 @@ stop_button = customtkinter.CTkButton(
 stop_button.pack(padx=20, pady=10)
 
 
-entry = customtkinter.CTkEntry(master=window, placeholder_text="Your email address")
-entry.pack(padx=20, pady=10)
+user_email = customtkinter.CTkEntry(master=window, placeholder_text="Your email address")
+user_email.pack(padx=20, pady=10)
 
 # create a text widget to display the contents of the database
 
