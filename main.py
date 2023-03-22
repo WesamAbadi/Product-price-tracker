@@ -64,6 +64,7 @@ def track_price():
                                 (converted_price,))
                     for row in cur.execute('''SELECT * FROM trackers'''):
                         print(row)
+                        print(converted_price)
                     old_price = converted_price
                     user_email_text = user_email.get()
                     if len(user_email_text.strip()) != 0:
@@ -80,7 +81,8 @@ def track_price():
 
                 textbox.delete("1.0", "end")
                 for row in cur.execute('''SELECT * FROM trackers'''):
-                    textbox.insert("end", str(row) + "\n")
+                    rowss=str(row).replace(",", "")
+                    textbox.insert("end", str(rowss) + "$" + "\n")
 
             except Exception as e:
                 print("An error occurred:", e)
@@ -163,7 +165,7 @@ stop_button = customtkinter.CTkButton(
 stop_button.pack(padx=20, pady=10)
 
 
-user_email = customtkinter.CTkEntry(master=window, placeholder_text="Your email address")
+user_email = customtkinter.CTkEntry(master=window, placeholder_text="Your email address", width=220)
 user_email.pack(padx=20, pady=10)
 
 # create a text widget to display the contents of the database
@@ -175,6 +177,12 @@ textbox.configure(width=500, height=300)
 textbox.pack()
 
 
+def on_closing():
+    stop_tracking()
+    print("oye, why quitting?")
+    window.destroy()
 
+
+window.protocol("WM_DELETE_WINDOW", on_closing)
 
 window.mainloop()
