@@ -198,7 +198,11 @@ textbox.pack()
 
 
 def on_closing():
-    stop_tracking()
+    try:
+        stop_tracking()
+    except:
+        print("the thread isn't on.")
+
     print("oye, why quitting?")
     window.destroy()
 

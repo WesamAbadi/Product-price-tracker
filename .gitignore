@@ -3,3 +3,6 @@ __pycache__
 trckerS.db
 .env
 mailapp.py
+dist
+build
+main.spec
