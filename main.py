@@ -43,7 +43,7 @@ def track_price():
 
                 # Extract title and price based on the selected website
                 if website == "http://127.0.0.1:5500/dist/index.html":
-                    title = soup.find("h3").get_text()
+                    title = soup.find("h3", class_="product-title").get_text()
                     price = (
                         soup.find("h4", class_="product-price")
                         .get_text()
@@ -75,10 +75,12 @@ def track_price():
                     for row in cur.execute("""SELECT * FROM trackers"""):
                         print(row)
                         print(converted_price)
-                    old_price = converted_price
                     user_email_text = user_email.get()
                     if len(user_email_text.strip()) != 0:
-                        send_email(converted_price, user_email_text)
+                        send_email(old_price, converted_price, title, user_email_text)
+                    old_price = converted_price
+
+
                 elif converted_price > old_price:
                     cur.execute("INSERT INTO trackers VALUES (?)", (converted_price,))
                     old_price = converted_price
@@ -100,19 +102,19 @@ def track_price():
             time.sleep(1)
 
 
-def send_email(price, email):
+def send_email(old_proce, price, product_name, email):
     email_sender = os.getenv("email_sender")
 
     email_password = os.getenv("email_password")
 
     email_receiver = email
 
-    subject = "Price just droped!!"
+    subject = "Price just droped!"
     body = (
-        """
-    The price of the product you're tracking just droped to """
+        """The price of the product you're tracking just droped to """
         + str(price)
-        + "$"
+        + "$ \n -original price was: "+str(old_proce)+"$ \n -product name: "+product_name
+        + "\n \n for more inforamtion, please visit our repo.: https://github.com/WesamAbadi/Product-price-tracker"
     )
 
     em = EmailMessage()
