@@ -1,3 +1,9 @@
+import os
+import matplotlib as mpl
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using non-interactive Agg backend')
+    mpl.use('Agg')
+import matplotlib.pyplot as plt
 import sqlite3
 import requests
 from bs4 import BeautifulSoup
@@ -8,7 +14,6 @@ import customtkinter
 from email.message import EmailMessage
 import ssl
 import smtplib
-import os
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -147,8 +152,6 @@ def stop_tracking():
 
 
 # create a tkinter window
-
-
 window = customtkinter.CTk()
 window.geometry("600x500")
 window.title("Product Price tracker")
@@ -161,7 +164,6 @@ selected_website = tk.StringVar(window)
 selected_website.set(websites[0])
 
 # create the dropdown menu for website selection
-
 website_label = tk.Label(
     window, text="Select a Website to track from:", background=mycolor, fg="white"
 )
